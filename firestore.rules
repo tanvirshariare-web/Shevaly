@@ -1,0 +1,158 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function isValidId(id) { return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$'); }
+    function incoming() { return request.resource.data; }
+    function existing() { return resource.data; }
+    function isSignedIn() { return request.auth != null; }
+    function isVerified() { return request.auth.token.email_verified == true; }
+    function isAdmin() { 
+      return (request.auth != null && request.auth.token.email == 'admin@shevaly.com' && isVerified()) ||
+             (isSignedIn() && exists(/databases/$(database)/documents/users/$(request.auth.uid)) && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin'); 
+    }
+
+    function checkCreateKeys(data, keys) {
+      return data.keys().hasAll(keys) && data.keys().size() == keys.size();
+    }
+
+    function isValidUser(data) {
+      return checkCreateKeys(data, ['role', 'displayName', 'photoURL', 'createdAt']) &&
+        data.role in ['customer', 'seller', 'admin'] &&
+        data.displayName is string && data.displayName.size() <= 100 &&
+        data.photoURL is string && data.photoURL.size() <= 500 &&
+        data.createdAt is timestamp;
+    }
+
+    function isValidUserPrivate(data) {
+      return checkCreateKeys(data, ['email', 'phone']) &&
+        data.email is string && data.email.size() <= 200 &&
+        data.phone is string && data.phone.size() <= 20;
+    }
+
+    function isValidShop(data) {
+      return checkCreateKeys(data, ['name', 'ownerId', 'status', 'createdAt']) &&
+             data.name is string && data.name.size() <= 100 &&
+             data.ownerId is string && data.ownerId.size() <= 128 &&
+             data.status in ['pending', 'active', 'banned'] &&
+             data.createdAt is timestamp;
+    }
+
+    function isValidProduct(data) {
+      return checkCreateKeys(data, ['name', 'description', 'price', 'stock', 'shopId', 'sellerId', 'images', 'status', 'createdAt', 'updatedAt']) &&
+             data.name is string && data.name.size() <= 200 &&
+             data.description is string && data.description.size() <= 5000 &&
+             data.price is number && data.price >= 0 &&
+             data.stock is number && data.stock >= 0 &&
+             data.shopId is string && data.shopId.size() <= 128 &&
+             data.sellerId is string && data.sellerId.size() <= 128 &&
+             data.images is list && data.images.size() <= 5 && (data.images.size() == 0 || data.images[0] is string) &&
+             data.status in ['active', 'draft'] &&
+             data.createdAt is timestamp &&
+             data.updatedAt is timestamp;
+    }
+
+    function isValidOrder(data) {
+      return checkCreateKeys(data, ['customerId', 'sellerId', 'shopId', 'totalAmount', 'status', 'createdAt', 'updatedAt']) &&
+             data.customerId is string && data.customerId.size() <= 128 &&
+             data.sellerId is string && data.sellerId.size() <= 128 &&
+             data.shopId is string && data.shopId.size() <= 128 &&
+             data.totalAmount is number && data.totalAmount >= 0 &&
+             data.status in ['pending', 'processing', 'shipped', 'delivered'] &&
+             data.createdAt is timestamp &&
+             data.updatedAt is timestamp;
+    }
+
+    function isValidOrderItem(data) {
+      return checkCreateKeys(data, ['productId', 'quantity', 'price']) &&
+             data.productId is string && data.productId.size() <= 128 &&
+             data.quantity is number && data.quantity > 0 &&
+             data.price is number && data.price >= 0;
+    }
+
+    match /users/{userId} {
+      allow get: if true; 
+      allow list: if isAdmin();
+      allow create: if isSignedIn() && isVerified() && isValidId(userId) && request.auth.uid == userId && 
+                       isValidUser(incoming()) && incoming().createdAt == request.time && 
+                       (incoming().role == 'customer' || incoming().role == 'seller'); 
+      allow update: if (isSignedIn() && isVerified() && request.auth.uid == userId && isValidUser(incoming()) && 
+                        incoming().role == existing().role && incoming().createdAt == existing().createdAt &&
+                        incoming().diff(existing()).affectedKeys().hasOnly(['displayName', 'photoURL'])) 
+                        || isAdmin();
+      
+      match /private/{docId} {
+        allow get: if isSignedIn() && request.auth.uid == userId;
+        allow list: if isAdmin();
+        allow create: if isSignedIn() && isVerified() && request.auth.uid == userId && docId == 'info' && isValidUserPrivate(incoming());
+        allow update: if (isSignedIn() && isVerified() && request.auth.uid == userId && docId == 'info' && isValidUserPrivate(incoming()) &&
+                         incoming().diff(existing()).affectedKeys().hasOnly(['phone'])) || isAdmin();
+      }
+    }
+
+    match /shops/{shopId} {
+      allow get: if true;
+      allow list: if true;
+      allow create: if isSignedIn() && isVerified() && isValidId(shopId) && isValidShop(incoming()) && 
+                       incoming().ownerId == request.auth.uid && incoming().status == 'pending' &&
+                       incoming().createdAt == request.time;
+      allow update: if isSignedIn() && isVerified() && isValidShop(incoming()) && 
+                       incoming().createdAt == existing().createdAt &&
+                       incoming().ownerId == existing().ownerId &&
+                       (
+                         (incoming().ownerId == request.auth.uid && existing().status != 'banned' && incoming().diff(existing()).affectedKeys().hasOnly(['name'])) ||
+                         (isAdmin() && incoming().diff(existing()).affectedKeys().hasOnly(['status']))
+                       );
+    }
+
+    match /products/{productId} {
+      allow get: if true;
+      allow list: if resource.data.status == 'active' || (isSignedIn() && resource.data.sellerId == request.auth.uid) || isAdmin();
+      allow create: if isSignedIn() && isVerified() && isValidId(productId) && isValidProduct(incoming()) &&
+                       incoming().sellerId == request.auth.uid &&
+                       exists(/databases/$(database)/documents/shops/$(incoming().shopId)) &&
+                       get(/databases/$(database)/documents/shops/$(incoming().shopId)).data.ownerId == request.auth.uid &&
+                       incoming().createdAt == request.time && incoming().updatedAt == request.time;
+      allow update: if isSignedIn() && isVerified() && isValidProduct(incoming()) &&
+                       incoming().createdAt == existing().createdAt &&
+                       incoming().shopId == existing().shopId &&
+                       incoming().sellerId == existing().sellerId &&
+                       incoming().updatedAt == request.time &&
+                       (incoming().sellerId == request.auth.uid || isAdmin()) &&
+                       incoming().diff(existing()).affectedKeys().hasOnly(['name', 'description', 'price', 'stock', 'images', 'status', 'updatedAt']);
+    }
+
+    match /orders/{orderId} {
+      allow get: if isSignedIn() && (resource.data.customerId == request.auth.uid || resource.data.sellerId == request.auth.uid || isAdmin());
+      allow list: if isSignedIn() && (resource.data.customerId == request.auth.uid || resource.data.sellerId == request.auth.uid || isAdmin());
+      allow create: if isSignedIn() && isVerified() && isValidId(orderId) && isValidOrder(incoming()) &&
+                       incoming().customerId == request.auth.uid &&
+                       exists(/databases/$(database)/documents/shops/$(incoming().shopId)) &&
+                       incoming().sellerId == get(/databases/$(database)/documents/shops/$(incoming().shopId)).data.ownerId &&
+                       incoming().createdAt == request.time && incoming().updatedAt == request.time;
+      allow update: if isSignedIn() && isVerified() && isValidOrder(incoming()) &&
+                       incoming().customerId == existing().customerId &&
+                       incoming().sellerId == existing().sellerId &&
+                       incoming().shopId == existing().shopId &&
+                       incoming().totalAmount == existing().totalAmount &&
+                       incoming().createdAt == existing().createdAt &&
+                       incoming().updatedAt == request.time &&
+                       (
+                         (incoming().sellerId == request.auth.uid && existing().status != 'delivered' && incoming().diff(existing()).affectedKeys().hasOnly(['status', 'updatedAt'])) ||
+                         isAdmin()
+                       );
+      
+      match /items/{itemId} {
+        allow get: if isSignedIn() && (get(/databases/$(database)/documents/orders/$(orderId)).data.customerId == request.auth.uid || get(/databases/$(database)/documents/orders/$(orderId)).data.sellerId == request.auth.uid || isAdmin());
+        allow list: if isSignedIn() && (get(/databases/$(database)/documents/orders/$(orderId)).data.customerId == request.auth.uid || get(/databases/$(database)/documents/orders/$(orderId)).data.sellerId == request.auth.uid || isAdmin());
+        allow create: if isSignedIn() && isVerified() && isValidId(itemId) && isValidOrderItem(incoming()) &&
+                         get(/databases/$(database)/documents/orders/$(orderId)).data.customerId == request.auth.uid &&
+                         exists(/databases/$(database)/documents/products/$(incoming().productId));
+        allow update: if false; // Order items are immutable
+      }
+    }
+  }
+}
