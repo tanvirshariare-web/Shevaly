@@ -170,9 +170,16 @@ const Header = ({ cart, sellerStatus, onOpenSellerModal, wishlistCount, onOpenWi
                               <div className={`overflow-hidden transition-all duration-300 ease-in-out ${expandedSubcategories.includes(sub.name) ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'}`}>
                                 <div className="px-4 pb-3 flex flex-col gap-1.5 pt-1">
                                   {sub.items.map((item, itemIdx) => (
-                                    <Link key={itemIdx} href="/" className="text-sm font-medium text-gray-500 hover:text-black py-1.5 flex items-center gap-2 pl-3 border-l-2 border-transparent hover:border-zinc-800 transition-colors rounded-r-md hover:bg-white">
+                                    <button
+                                      key={itemIdx}
+                                      onClick={() => {
+                                        setIsCategoryDropdownOpen(false);
+                                        document.getElementById('product-section')?.scrollIntoView({ behavior: 'smooth' });
+                                      }}
+                                      className="text-sm font-medium text-gray-500 hover:text-black py-1.5 flex items-center gap-2 pl-3 border-l-2 border-transparent hover:border-zinc-800 transition-colors rounded-r-md hover:bg-white w-full text-left"
+                                    >
                                       {item}
-                                    </Link>
+                                    </button>
                                   ))}
                                 </div>
                               </div>
@@ -187,13 +194,13 @@ const Header = ({ cart, sellerStatus, onOpenSellerModal, wishlistCount, onOpenWi
               
               <div className="bg-[#FDE2E4] border-t border-[#ebeced] p-4 sm:p-6 shrink-0 z-10 w-full mt-auto">
                 <div className="max-w-4xl flex flex-col md:flex-row flex-wrap gap-4 mx-auto w-full items-center justify-center md:justify-between text-black">
-                  <Link href="/" className="flex items-center justify-between md:justify-start bg-white px-5 py-3 rounded-xl border border-[#ebeced] hover:border-zinc-800 hover:shadow-sm transition-all group w-full md:w-auto md:min-w-[200px]">
+                  <button onClick={() => { setIsCategoryDropdownOpen(false); document.getElementById('product-section')?.scrollIntoView({ behavior: 'smooth' }); }} className="flex items-center justify-between md:justify-start bg-white px-5 py-3 rounded-xl border border-[#ebeced] hover:border-zinc-800 hover:shadow-sm transition-all group w-full md:w-auto md:min-w-[200px]">
                     <div className="flex items-center gap-3">
                       <Headphones className="w-5 h-5 text-gray-600 group-hover:text-black transition-colors" />
                       <span className="font-bold text-gray-800 text-sm">Shevaly Helpline</span>
                     </div>
                     <ExternalLink className="w-4 h-4 text-gray-400 group-hover:text-black md:hidden" />
-                  </Link>
+                  </button>
                   
                   <a href="mailto:shevalyofficial@gmail.com" className="flex items-center justify-between md:justify-start bg-white px-5 py-3 rounded-xl border border-[#ebeced] hover:border-zinc-800 hover:shadow-sm transition-all group w-full md:w-auto md:min-w-[200px]">
                     <div className="flex items-center gap-3">
@@ -210,13 +217,13 @@ const Header = ({ cart, sellerStatus, onOpenSellerModal, wishlistCount, onOpenWi
                     </div>
                   </a>
 
-                  <Link href="/" className="flex items-center justify-between md:justify-start bg-white px-5 py-3 rounded-xl border border-[#ebeced] hover:border-zinc-800 hover:shadow-sm transition-all group w-full md:w-auto md:min-w-[200px]">
+                  <button onClick={() => { setIsCategoryDropdownOpen(false); document.getElementById('product-section')?.scrollIntoView({ behavior: 'smooth' }); }} className="flex items-center justify-between md:justify-start bg-white px-5 py-3 rounded-xl border border-[#ebeced] hover:border-zinc-800 hover:shadow-sm transition-all group w-full md:w-auto md:min-w-[200px]">
                     <div className="flex items-center gap-3">
                       <MessageCircle className="w-5 h-5 text-gray-600 group-hover:text-black transition-colors" />
                       <span className="font-bold text-gray-800 text-sm">01907104920</span>
                     </div>
                     <ExternalLink className="w-4 h-4 text-gray-400 group-hover:text-black md:hidden" />
-                  </Link>
+                  </button>
                 </div>
               </div>
             </div>
@@ -553,7 +560,7 @@ const SingleBanner = () => {
           ESSENTIALS
         </h2>
         
-        <button className="bg-white text-gray-900 px-8 py-3.5 rounded-full font-bold text-sm flex items-center gap-3 hover:bg-[#5A0613] shadow-sm text-gray-900 hover:text-black transition-all duration-300 shadow-[0_0_20px_rgba(255,255,255,0.2)] hover:shadow-[0_0_30px_rgba(144,18,53,0.4)] group/btn transform hover:-translate-y-1">
+        <button onClick={() => { document.getElementById('product-section')?.scrollIntoView({ behavior: 'smooth' }) }} className="bg-white text-gray-900 px-8 py-3.5 rounded-full font-bold text-sm flex items-center gap-3 hover:bg-[#5A0613] shadow-sm text-gray-900 hover:text-black transition-all duration-300 shadow-[0_0_20px_rgba(255,255,255,0.2)] hover:shadow-[0_0_30px_rgba(144,18,53,0.4)] group/btn transform hover:-translate-y-1">
           Shop Collection <ChevronRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
         </button>
       </div>
@@ -1436,7 +1443,7 @@ const ProductDetail = ({
         <button onClick={() => { onAddToCart(product, quantity, { size: selectedSize, color: selectedColor }); setQuantity(1); }} className="p-2 text-gray-600 hover:bg-[#FDE2E4] rounded-lg border border-[#ebeced] flex flex-col items-center justify-center w-12 h-12 shrink-0">
           <ShoppingCart className="w-5 h-5" />
         </button>
-        <button className="p-2 text-gray-600 hover:bg-[#FDE2E4] rounded-lg border border-[#ebeced] flex flex-col items-center justify-center w-12 h-12 shrink-0">
+        <button onClick={() => window.open('mailto:shevalyofficial@gmail.com')} className="p-2 text-gray-600 hover:bg-[#FDE2E4] rounded-lg border border-[#ebeced] flex flex-col items-center justify-center w-12 h-12 shrink-0">
           <MessageCircle className="w-5 h-5" />
         </button>
         <button 
@@ -2052,7 +2059,7 @@ const FlashSale = ({ products, onProductClick, onAddToCart, onBuyNow, wishlist, 
 
         {/* Mobile Shop All Deals Button */}
         <div className="md:hidden flex justify-center mt-4">
-          <button className="flex items-center gap-2 text-gray-800 bg-white hover:bg-[#FDE2E4] px-6 py-3 rounded-xl transition-colors font-bold text-sm border border-[#ebeced] w-full justify-center shadow-sm">
+          <button onClick={() => { document.getElementById('product-section')?.scrollIntoView({ behavior: 'smooth' }) }} className="flex items-center gap-2 text-gray-800 bg-white hover:bg-[#FDE2E4] px-6 py-3 rounded-xl transition-colors font-bold text-sm border border-[#ebeced] w-full justify-center shadow-sm">
             Shop All Deals <ChevronRight className="w-4 h-4" />
           </button>
         </div>
@@ -2203,7 +2210,7 @@ const ProductSection = ({
 
 
 
-const MobileCategoryMenu = ({ isOpen, onClose }: { isOpen: boolean, onClose: () => void }) => {
+const MobileCategoryMenu = ({ isOpen, onClose, onCategoryClick }: { isOpen: boolean, onClose: () => void, onCategoryClick: (category: string) => void }) => {
   const [expandedCategories, setExpandedCategories] = useState<string[]>([]);
   const [expandedSubcategories, setExpandedSubcategories] = useState<string[]>([]);
 
@@ -2264,10 +2271,10 @@ const MobileCategoryMenu = ({ isOpen, onClose }: { isOpen: boolean, onClose: () 
                       {expandedSubcategories.includes(sub.name) && (
                         <div className="px-3 pb-3 pt-1 grid grid-cols-2 gap-2">
                           {sub.items.map((item, itemIdx) => (
-                            <Link key={itemIdx} href="/" className="text-xs text-gray-600 hover:text-gray-800 py-1.5 flex items-center gap-1">
+                            <button key={itemIdx} onClick={() => { onCategoryClick(item); onClose(); }} className="text-xs text-gray-600 hover:text-gray-800 py-1.5 flex items-center gap-1 w-full text-left">
                               <ChevronRight className="w-3 h-3" />
                               {item}
-                            </Link>
+                            </button>
                           ))}
                         </div>
                       )}
@@ -2280,13 +2287,13 @@ const MobileCategoryMenu = ({ isOpen, onClose }: { isOpen: boolean, onClose: () 
         </div>
 
         <div className="bg-[#FDE2E4]/30 p-4 space-y-3 mt-auto border-t border-[#FDE2E4]">
-          <Link href="/" className="flex items-center justify-between bg-white px-4 py-3 rounded-xl border border-[#FDE2E4] hover:border-zinc-800 hover:shadow-sm transition-all group">
+          <button onClick={() => { onClose(); document.getElementById('product-section')?.scrollIntoView({ behavior: 'smooth' }); }} className="w-full flex items-center justify-between bg-white px-4 py-3 rounded-xl border border-[#FDE2E4] hover:border-zinc-800 hover:shadow-sm transition-all group">
             <div className="flex items-center gap-3">
               <Headphones className="w-5 h-5 text-gray-800" />
               <span className="font-medium text-gray-800">Shevaly Helpline</span>
             </div>
             <ExternalLink className="w-4 h-4 text-gray-400 group-hover:text-gray-800" />
-          </Link>
+          </button>
           
           <a href="mailto:shevalyofficial@gmail.com" className="flex items-center justify-between bg-white px-4 py-3 rounded-xl border border-[#FDE2E4] hover:border-zinc-800 hover:shadow-sm transition-all group">
             <div className="flex items-center gap-3">
@@ -2303,13 +2310,13 @@ const MobileCategoryMenu = ({ isOpen, onClose }: { isOpen: boolean, onClose: () 
             </div>
           </a>
           
-          <Link href="/" className="flex items-center justify-between bg-white px-4 py-3 rounded-xl border border-[#FDE2E4] hover:border-zinc-800 hover:shadow-sm transition-all group">
+          <button onClick={() => { onClose(); document.getElementById('product-section')?.scrollIntoView({ behavior: 'smooth' }); }} className="w-full flex items-center justify-between bg-white px-4 py-3 rounded-xl border border-[#FDE2E4] hover:border-zinc-800 hover:shadow-sm transition-all group">
             <div className="flex items-center gap-3">
               <MessageCircle className="w-5 h-5 text-gray-800" fill="#80091B" />
               <span className="font-medium text-gray-800">01907104920</span>
             </div>
             <ExternalLink className="w-4 h-4 text-gray-400 group-hover:text-gray-800" />
-          </Link>
+          </button>
         </div>
       </div>
     </div>
@@ -2523,7 +2530,7 @@ const BecomeSellerModal = ({ isOpen, onClose, onComplete }: { isOpen: boolean, o
 
               <div className="bg-blue-50 p-4 rounded-xl border border-blue-100 mt-2">
                 <p className="text-xs text-gray-900 leading-relaxed">
-                  By submitting this form, you agree to Shevaly&apos;s <Link href="/" className="font-bold underline hover:text-gray-900">Seller Terms & Conditions</Link> and <Link href="/" className="font-bold underline hover:text-gray-900">Privacy Policy</Link>.
+                  By submitting this form, you agree to Shevaly&apos;s <button onClick={(e) => { e.preventDefault(); alert("Seller Terms and conditions are coming soon."); }} className="font-bold underline hover:text-gray-900">Seller Terms & Conditions</button> and <button onClick={(e) => { e.preventDefault(); alert("Privacy Policy is coming soon."); }} className="font-bold underline hover:text-gray-900">Privacy Policy</button>.
                 </p>
               </div>
 
@@ -2636,7 +2643,7 @@ const CartPage = ({ cart, onClose, onUpdateQuantity, onRemove }: { cart: any[], 
                   <span className="font-bold text-gray-900">Total</span>
                   <span className="font-bold text-xl text-gray-800">৳{cartTotal}</span>
                 </div>
-                <button className="w-full bg-[#80091B] text-white border border-[#FDE2E4] shadow-sm py-3.5 rounded-xl font-bold text-lg hover:bg-[#80091B] transition shadow-md">
+                <button onClick={() => { document.getElementById('product-section')?.scrollIntoView({ behavior: 'smooth' }); onClose(); }} className="w-full bg-[#80091B] text-white border border-[#FDE2E4] shadow-sm py-3.5 rounded-xl font-bold text-lg hover:bg-[#80091B] transition shadow-md">
                   Proceed to Checkout
                 </button>
               </div>
@@ -2838,7 +2845,7 @@ const MobileStickyHeader = ({ cartCount, onOpenCart, onOpenCategoryMenu }: { car
   );
 };
 
-const Footer = ({ onOpenTerms }: { onOpenTerms: () => void }) => {
+const Footer = ({ onOpenTerms, onOpenSellerModal }: { onOpenTerms: () => void, onOpenSellerModal: () => void }) => {
   return (
     <footer className="bg-white border-t border-[#ebeced] pt-12 pb-24 md:pb-12 mt-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -2855,20 +2862,20 @@ const Footer = ({ onOpenTerms }: { onOpenTerms: () => void }) => {
             <div className="pt-2">
               <p className="text-sm font-bold text-gray-900 mb-3">Download <span className="text-gray-800">Shevaly</span> Mobile App</p>
               <div className="flex gap-3">
-                <button className="flex items-center gap-2 border border-gray-900 rounded-lg px-3 py-2 hover:bg-[#FDE2E4] transition">
+                <a href="https://play.google.com" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 border border-gray-900 rounded-lg px-3 py-2 hover:bg-[#FDE2E4] transition">
                   <Play className="w-5 h-5 fill-current" />
                   <div className="text-left">
                     <div className="text-[8px] uppercase leading-none mb-0.5">GET IT ON</div>
                     <div className="text-xs font-bold leading-none">Google Play</div>
                   </div>
-                </button>
-                <button className="flex items-center gap-2 border border-gray-900 rounded-lg px-3 py-2 hover:bg-[#FDE2E4] transition">
+                </a>
+                <a href="https://apple.com/app-store" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 border border-gray-900 rounded-lg px-3 py-2 hover:bg-[#FDE2E4] transition">
                   <Apple className="w-5 h-5 fill-current" />
                   <div className="text-left">
                     <div className="text-[8px] uppercase leading-none mb-0.5">Download on the</div>
                     <div className="text-xs font-bold leading-none">App Store</div>
                   </div>
-                </button>
+                </a>
               </div>
             </div>
           </div>
@@ -2877,11 +2884,11 @@ const Footer = ({ onOpenTerms }: { onOpenTerms: () => void }) => {
           <div>
             <h3 className="text-lg font-bold text-gray-900 mb-4">Shevaly Policies</h3>
             <ul className="space-y-3 text-sm text-gray-600 font-medium">
-              <li><Link href="/" className="hover:text-gray-800 transition">Return & Refund Policy</Link></li>
-              <li><Link href="/" className="hover:text-gray-800 transition">Exchange Policy</Link></li>
-              <li><Link href="/" className="text-gray-800 hover:underline transition">Shipping & Delivery Policy</Link></li>
-              <li><Link href="/" className="hover:text-gray-800 transition">Cancellation Policy</Link></li>
-              <li><Link href="/" className="hover:text-gray-800 transition">Privacy Policy</Link></li>
+              <li><button onClick={(e) => { e.preventDefault(); onOpenTerms(); }} className="hover:text-gray-800 transition">Return & Refund Policy</button></li>
+              <li><button onClick={(e) => { e.preventDefault(); onOpenTerms(); }} className="hover:text-gray-800 transition">Exchange Policy</button></li>
+              <li><button onClick={(e) => { e.preventDefault(); onOpenTerms(); }} className="text-gray-800 hover:underline transition">Shipping & Delivery Policy</button></li>
+              <li><button onClick={(e) => { e.preventDefault(); onOpenTerms(); }} className="hover:text-gray-800 transition">Cancellation Policy</button></li>
+              <li><button onClick={(e) => { e.preventDefault(); onOpenTerms(); }} className="hover:text-gray-800 transition">Privacy Policy</button></li>
               <li><button onClick={(e) => { e.preventDefault(); onOpenTerms(); }} className="hover:text-gray-800 transition">Terms & Conditions</button></li>
             </ul>
           </div>
@@ -2890,13 +2897,13 @@ const Footer = ({ onOpenTerms }: { onOpenTerms: () => void }) => {
           <div>
             <h3 className="text-lg font-bold text-gray-900 mb-4">Shevaly Seller</h3>
             <ul className="space-y-3 text-sm text-gray-600 font-medium">
-              <li><Link href="/" className="hover:text-gray-800 transition">Become A Seller</Link></li>
+              <li><button onClick={(e) => { e.preventDefault(); onOpenSellerModal(); }} className="hover:text-gray-800 transition">Become A Seller</button></li>
               <li><Link href="/seller" className="hover:text-gray-800 transition">Seller Dashboard</Link></li>
               <li><Link href="/admin" className="hover:text-gray-800 transition">Admin Dashboard</Link></li>
-              <li><Link href="/" className="hover:text-gray-800 transition">Seller Policy</Link></li>
-              <li><Link href="/" className="hover:text-gray-800 transition">Product Policy</Link></li>
-              <li><Link href="/" className="hover:text-gray-800 transition">Pickup & Delivery Policy</Link></li>
-              <li><Link href="/" className="hover:text-gray-800 transition">Seller Exchange & Return Policy</Link></li>
+              <li><button onClick={(e) => { e.preventDefault(); onOpenTerms(); }} className="hover:text-gray-800 transition">Seller Policy</button></li>
+              <li><button onClick={(e) => { e.preventDefault(); onOpenTerms(); }} className="hover:text-gray-800 transition">Product Policy</button></li>
+              <li><button onClick={(e) => { e.preventDefault(); onOpenTerms(); }} className="hover:text-gray-800 transition">Pickup & Delivery Policy</button></li>
+              <li><button onClick={(e) => { e.preventDefault(); onOpenTerms(); }} className="hover:text-gray-800 transition">Seller Exchange & Return Policy</button></li>
             </ul>
           </div>
 
@@ -2904,11 +2911,11 @@ const Footer = ({ onOpenTerms }: { onOpenTerms: () => void }) => {
           <div>
             <h3 className="text-lg font-bold text-gray-900 mb-4">Social Links</h3>
             <ul className="space-y-3 text-sm text-gray-600 font-medium">
-              <li><Link href="/" className="flex items-center gap-2 hover:text-gray-800 transition"><Facebook className="w-5 h-5" /> Facebook</Link></li>
-              <li><Link href="/" className="flex items-center gap-2 hover:text-gray-800 transition"><Instagram className="w-5 h-5" /> Instagram</Link></li>
-              <li><Link href="/" className="flex items-center gap-2 hover:text-gray-800 transition"><Music className="w-5 h-5" /> TikTok</Link></li>
-              <li><Link href="/" className="flex items-center gap-2 hover:text-gray-800 transition"><Youtube className="w-5 h-5" /> YouTube</Link></li>
-              <li><Link href="/" className="flex items-center gap-2 hover:text-gray-800 transition"><MessageCircle className="w-5 h-5" /> WhatsApp</Link></li>
+              <li><a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 hover:text-gray-800 transition"><Facebook className="w-5 h-5" /> Facebook</a></li>
+              <li><a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 hover:text-gray-800 transition"><Instagram className="w-5 h-5" /> Instagram</a></li>
+              <li><a href="https://tiktok.com" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 hover:text-gray-800 transition"><Music className="w-5 h-5" /> TikTok</a></li>
+              <li><a href="https://youtube.com" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 hover:text-gray-800 transition"><Youtube className="w-5 h-5" /> YouTube</a></li>
+              <li><a href="https://wa.me/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 hover:text-gray-800 transition"><MessageCircle className="w-5 h-5" /> WhatsApp</a></li>
             </ul>
           </div>
         </div>
@@ -3171,9 +3178,9 @@ export default function Home() {
           </div>
         )}
       </main>
-      <Footer onOpenTerms={() => setIsTermsOpen(true)} />
+      <Footer onOpenTerms={() => setIsTermsOpen(true)} onOpenSellerModal={() => setIsSellerModalOpen(true)} />
       <BottomNav cartCount={cartCount} onCategoryClick={() => setIsCategoryMenuOpen(true)} onOpenCart={() => setIsCartOpen(true)} onOpenProfile={handleOpenProfile} />
-      <MobileCategoryMenu isOpen={isCategoryMenuOpen} onClose={() => setIsCategoryMenuOpen(false)} />
+      <MobileCategoryMenu isOpen={isCategoryMenuOpen} onClose={() => setIsCategoryMenuOpen(false)} onCategoryClick={handleCategorySelect} />
       <BecomeSellerModal isOpen={isSellerModalOpen} onClose={() => setIsSellerModalOpen(false)} onComplete={() => setSellerStatus('pending')} />
       <UserProfileModal isOpen={isProfileOpen} onClose={() => setIsProfileOpen(false)} user={user} sellerStatus={sellerStatus} onOpenSellerModal={() => { setIsProfileOpen(false); setIsSellerModalOpen(true); }} />
       <FilterModal isOpen={isFilterModalOpen} onClose={() => setIsFilterModalOpen(false)} filters={filters} setFilters={setFilters} />
