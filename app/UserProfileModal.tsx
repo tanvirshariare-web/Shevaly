@@ -81,9 +81,9 @@ const UserProfileModal = ({ isOpen, onClose, user, sellerStatus, onOpenSellerMod
   };
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-in fade-in transition-all duration-300" onClick={onClose}>
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-sm animate-in fade-in transition-all duration-300 md:p-4" onClick={onClose}>
       <div 
-        className="bg-[#fcfbf9] rounded-[32px] w-full max-w-5xl h-[85vh] overflow-hidden flex flex-col relative shadow-[0_20px_60px_-15px_rgba(0,0,0,0.3)] animate-in slide-in-from-bottom-4 zoom-in-95" 
+        className="bg-[#fcfbf9] rounded-none md:rounded-[32px] w-full max-w-5xl h-[100dvh] md:h-[85vh] overflow-hidden flex flex-col relative shadow-[0_20px_60px_-15px_rgba(0,0,0,0.3)] animate-in slide-in-from-bottom-4 zoom-in-95" 
         onClick={e => e.stopPropagation()}
       >
         {/* Header */}

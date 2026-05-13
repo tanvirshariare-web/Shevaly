@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Menu, Search, Smartphone, User, Heart, ShoppingCart, Banknote, RotateCcw, Truck, Tag, X, Home as HomeIcon, LayoutGrid, MessageCircle, ChevronDown, ChevronRight, ChevronLeft, Filter, ArrowUpDown, Star, Store, Upload, CheckCircle, Clock, SlidersHorizontal, Eye, Headphones, Mail, Phone, ExternalLink, Share2, ShoppingBag, RefreshCcw, ArrowLeftRight, Play, Apple, Facebook, Instagram, Music, Youtube, Zap, Timer, Sparkles, HandCoins } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
 import { motion, useScroll, useTransform } from 'motion/react';
 import UserProfileModal from './UserProfileModal';
 import AuthModal from './AuthModal';
@@ -1140,8 +1141,73 @@ const ProductDetail = ({
         
         {/* Left/Top: Image */}
         <div className="md:w-1/2 bg-white relative">
+          {/* Mobile Image Viewer with Pinch-to-Zoom */}
+          <div className="md:hidden relative aspect-[4/5] overflow-hidden group">
+            <TransformWrapper
+              initialScale={1}
+              minScale={1}
+              maxScale={4}
+              centerOnInit
+              wheel={{ disabled: true }}
+              doubleClick={{ disabled: false }}
+              panning={{ velocityDisabled: true }}
+            >
+              <TransformComponent wrapperStyle={{ width: '100%', height: '100%' }} contentStyle={{ width: '100%', height: '100%' }}>
+                <Image referrerPolicy="no-referrer" 
+                  src={images[currentImageIdx]} 
+                  alt={product.name} 
+                  fill 
+                  className="object-cover"
+                />
+              </TransformComponent>
+            </TransformWrapper>
+
+            {/* Overlays for Mobile */}
+            <div className="absolute bottom-4 left-4 bg-white/80 backdrop-blur-sm px-2 py-1 rounded-md flex items-center gap-1 text-xs font-bold shadow-sm transition-opacity duration-200 pointer-events-none">
+              <span>{avgRating}</span>
+              <Star className="w-3 h-3 fill-gray-800 text-gray-800" />
+              <span className="text-gray-400 mx-1">|</span>
+              <span>16 sold</span>
+            </div>
+
+            <button 
+              onClick={(e) => {
+                 e.stopPropagation();
+                 const target = e.currentTarget;
+                 const icon = target.querySelector('svg');
+                 if (icon) {
+                    icon.setAttribute('fill', icon.getAttribute('fill') === 'currentColor' ? 'transparent' : 'currentColor');
+                    icon.setAttribute('class', icon.getAttribute('fill') === 'currentColor' ? 'w-8 h-8 text-gray-900' : 'w-8 h-8 text-gray-800');
+                 }
+              }}
+              className="absolute bottom-4 left-1/2 -translate-x-1/2 text-gray-800 hover:scale-110 transition-all duration-200 z-10"
+            >
+               <Heart className="w-8 h-8" fill="transparent" strokeWidth={2} />
+            </button>
+
+            <button 
+              onClick={(e) => e.stopPropagation()} 
+              className="absolute bottom-4 right-4 bg-white/80 hover:bg-white backdrop-blur-sm px-3 py-1.5 rounded-md flex items-center gap-2 text-xs font-bold shadow-sm transition-all duration-200 z-10"
+            >
+              <LayoutGrid className="w-4 h-4" /> View Similar
+            </button>
+
+            {/* Dots */}
+            {images.length > 1 && (
+              <div className="absolute bottom-16 left-0 right-0 flex justify-center gap-1.5 z-30 transition-opacity duration-200 pointer-events-none">
+                {images.map((img: string, idx: number) => (
+                  <div 
+                    key={idx} 
+                    className={`w-2 h-2 rounded-full transition-colors ${idx === currentImageIdx ? 'bg-[#e6e8ea] shadow-sm text-gray-900' : 'bg-white/50'}`}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Desktop Image Viewer with Zoom-on-Hover */}
           <div 
-            className="relative aspect-[4/5] md:rounded-2xl overflow-hidden cursor-zoom-in group"
+            className="hidden md:block relative aspect-[4/5] md:rounded-2xl overflow-hidden cursor-zoom-in group"
             onMouseEnter={() => setIsZoomed(true)}
             onMouseLeave={() => setIsZoomed(false)}
             onMouseMove={handleMouseMove}

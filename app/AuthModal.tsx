@@ -80,16 +80,27 @@ export default function AuthModal({ isOpen, onClose, initialMode = 'login' }: { 
   };
 
   return (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4 animate-in fade-in duration-300">
-      <div className="bg-white rounded-[32px] w-full max-w-md max-h-[100dvh] md:max-h-[90vh] overflow-y-auto shadow-[0_20px_60px_-15px_rgba(0,0,0,0.3)] relative animate-in zoom-in-95 duration-300">
+    <div className="fixed inset-0 bg-white z-[100] flex animate-in fade-in zoom-in-95 duration-300 overflow-hidden">
+      {/* Left side: Image (Desktop only) */}
+      <div className="hidden lg:block lg:w-1/2 relative bg-zinc-900 object-cover">
+         <Image referrerPolicy="no-referrer" fill src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=2070&auto=format&fit=crop" alt="Fashion background" className="object-cover opacity-80 mix-blend-overlay" />
+         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+         <div className="absolute bottom-12 left-12 text-white">
+            <h2 className="text-4xl font-serif font-bold mb-4">Discover Your Style</h2>
+            <p className="text-zinc-300 max-w-md">Join Shevaly to access exclusive collections, early sales, and personalized recommendations crafted just for you.</p>
+         </div>
+      </div>
+
+      {/* Right side: Form (Takes full width on mobile) */}
+      <div className="w-full lg:w-1/2 h-[100dvh] overflow-y-auto bg-white flex flex-col relative shadow-2xl">
         <button 
           onClick={onClose}
-          className="absolute top-5 right-5 p-2 text-gray-400 hover:text-gray-900 hover:bg-gray-100 rounded-full transition-colors z-10"
+          className="absolute top-5 right-5 p-3 text-gray-400 hover:text-gray-900 hover:bg-gray-100 rounded-full transition-colors z-20"
         >
-          <X className="w-5 h-5" />
+          <X className="w-6 h-6" />
         </button>
         
-        <div className="p-6 sm:p-8">
+        <div className="flex-1 flex flex-col justify-center px-6 sm:px-12 md:px-24 py-12 max-w-2xl mx-auto w-full">
           <div className="text-center mb-6">
             <div className="flex items-center justify-center gap-2 mb-3">
               <div className="w-16 h-16 relative">
