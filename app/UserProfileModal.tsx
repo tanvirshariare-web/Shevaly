@@ -17,6 +17,7 @@ const UserProfileModal = ({ isOpen, onClose, user, sellerStatus, onOpenSellerMod
   const [activeTab, setActiveTab] = useState('profile');
   const [trackingOrderId, setTrackingOrderId] = useState<string | null>(null);
   const [address, setAddress] = useState('');
+  const [showSignOutConfirm, setShowSignOutConfirm] = useState(false);
 
   const handleSaveAddress = () => {
     // Basic save simulation
@@ -172,7 +173,7 @@ const UserProfileModal = ({ isOpen, onClose, user, sellerStatus, onOpenSellerMod
                 Admin Dashboard
               </Link>
               <button 
-                onClick={handleLogout}
+                onClick={() => setShowSignOutConfirm(true)}
                 className="w-full flex items-center justify-center gap-3 px-4 py-3.5 mt-2 rounded-2xl font-medium text-red-600 hover:bg-red-50 transition-colors"
               >
                 <LogOut className="w-4 h-4" />
@@ -361,6 +362,32 @@ const UserProfileModal = ({ isOpen, onClose, user, sellerStatus, onOpenSellerMod
             )}
           </div>
         </div>
+
+        {showSignOutConfirm && (
+          <div className="absolute inset-0 z-[110] flex items-center justify-center bg-black/20 backdrop-blur-sm animate-in fade-in" onClick={() => setShowSignOutConfirm(false)}>
+            <div className="bg-white p-6 rounded-3xl shadow-xl w-80 flex flex-col items-center animate-in zoom-in-95" onClick={e => e.stopPropagation()}>
+              <div className="w-12 h-12 bg-red-50 text-red-600 rounded-full flex items-center justify-center mb-4">
+                <LogOut className="w-6 h-6" />
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-2 font-serif text-center">Sign Out</h3>
+              <p className="text-gray-500 text-center text-sm mb-6 leading-relaxed">Are you sure you want to sign out of your account?</p>
+              <div className="w-full flex gap-3">
+                <button 
+                  className="flex-1 py-3 overflow-hidden rounded-xl text-gray-700 font-medium hover:bg-gray-100 transition-colors"
+                  onClick={() => setShowSignOutConfirm(false)}
+                >
+                  Cancel
+                </button>
+                <button 
+                  className="flex-1 py-3 rounded-xl text-white bg-red-600 font-medium hover:bg-red-700 transition-colors shadow-sm"
+                  onClick={handleLogout}
+                >
+                  Sign Out
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -5,6 +5,7 @@ import { Menu, Search, Smartphone, User, Heart, ShoppingCart, Banknote, RotateCc
 import Image from 'next/image';
 import Link from 'next/link';
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
+import { ProductReviews } from './components/ProductReviews';
 import { motion, useScroll, useTransform } from 'motion/react';
 import UserProfileModal from './UserProfileModal';
 import AuthModal from './AuthModal';
@@ -1422,60 +1423,13 @@ const ProductDetail = ({
           </div>
 
           {/* Ratings & Reviews */}
-          <div className="p-4 bg-white md:rounded-2xl md:shadow-sm">
-            <h3 className="text-lg font-bold text-gray-900 mb-4">Rating & Reviews</h3>
-            <div className="flex items-center justify-between mb-6">
-              <div className="flex flex-col items-center">
-                <div className="flex items-center gap-1">
-                  <span className="text-5xl font-bold text-gray-900">{avgRating || '5.0'}</span>
-                  <Star className="w-8 h-8 fill-gray-800 text-gray-800" />
-                </div>
-                <span className="text-xs text-gray-500 mt-1">By Verified Buyers</span>
-              </div>
-              <div className="flex-1 max-w-[200px] space-y-1">
-                {[5, 4, 3, 2, 1].map(star => (
-                  <div key={star} className="flex items-center gap-2 text-xs text-gray-600">
-                    <span>{star}</span>
-                    <Star className="w-3 h-3 fill-gray-800 text-gray-800" />
-                    <div className="flex-1 h-1.5 bg-gray-200 rounded-full overflow-hidden">
-                      <div className="h-full bg-[#e6e8ea] shadow-sm text-gray-900" style={{ width: star === 5 ? '100%' : '0%' }}></div>
-                    </div>
-                    <span className="w-3 text-right">{star === 5 ? 9 : 0}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <h4 className="text-gray-800 font-bold text-lg mb-4">Product Reviews ({reviewCount})</h4>
-            <div className="space-y-4">
-              {/* Mock reviews based on video */}
-              <div className="border border-gray-100 rounded-xl p-4 shadow-sm">
-                <div className="flex justify-between items-start mb-2">
-                  <div>
-                    <div className="font-bold text-gray-900">Alamin</div>
-                    <div className="text-xs text-gray-500">Size: XXL 07-12-2025</div>
-                  </div>
-                  <div className="flex">
-                    {[...Array(5)].map((_, i) => <Star key={i} className="w-4 h-4 fill-gray-800 text-gray-800" />)}
-                  </div>
-                </div>
-                <p className="text-sm text-gray-700">জার্সিটির কোয়ালিটি খুবই ভালো</p>
-              </div>
-              <div className="border border-gray-100 rounded-xl p-4 shadow-sm">
-                <div className="flex justify-between items-start mb-2">
-                  <div>
-                    <div className="font-bold text-gray-900">Saidul Islam</div>
-                    <div className="text-xs text-gray-500">Size: L 24-01-2026</div>
-                  </div>
-                  <div className="flex">
-                    {[...Array(5)].map((_, i) => <Star key={i} className="w-4 h-4 fill-gray-800 text-gray-800" />)}
-                  </div>
-                </div>
-                <p className="text-sm text-gray-700">Quality was good. Also Shevaly team amake 2bar call diye product niye khoj nise. Onader eita amar onk vallagse.</p>
-              </div>
-            </div>
-            <button className="text-gray-800 font-medium text-sm mt-4">View More Reviews</button>
-          </div>
+          <ProductReviews 
+            reviews={reviews} 
+            onAddReview={(review: any) => onAddReview?.(review)} 
+            avgRating={avgRating} 
+            reviewCount={reviewCount} 
+            productName={product.name} 
+          />
 
           {/* Similar Products */}
           <div className="p-4 bg-white md:rounded-2xl md:shadow-sm">
@@ -1537,7 +1491,7 @@ const ProductDetail = ({
   );
 };
 
-const ProductCard = ({ product, onProductClick, onAddToCart, onBuyNow, avgRating, reviewCount, isWishlisted, onToggleWishlist, hideActions = false, isFlashSale = false }: any) => {
+const ProductCard = ({ product, onProductClick, onAddToCart, onBuyNow, avgRating, reviewCount, isWishlisted, onToggleWishlist, hideActions = false, isFlashSale = false, reviews = {}, onAddReview }: any) => {
   const [currentImageIdx, setCurrentImageIdx] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [isQuickViewOpen, setIsQuickViewOpen] = useState(false);
@@ -1963,37 +1917,13 @@ const ProductCard = ({ product, onProductClick, onAddToCart, onBuyNow, avgRating
                 
                 {/* Right: Rating & Reviews */}
                 <div className="lg:w-1/2">
-                  <div className="bg-white border border-gray-100 rounded-2xl p-8 shadow-sm">
-                    <h3 className="text-xl font-bold text-gray-900 mb-8">Rating & Reviews</h3>
-                    <div className="flex flex-col sm:flex-row items-center gap-10">
-                      <div className="flex flex-col items-center justify-center p-6 bg-[#FDE2E4] rounded-2xl min-w-[200px]">
-                        <div className="text-6xl font-black text-gray-900 flex items-center gap-2 mb-2">
-                          4.9
-                        </div>
-                        <div className="flex text-gray-800 mb-2">
-                          <Star className="w-5 h-5 fill-current" />
-                          <Star className="w-5 h-5 fill-current" />
-                          <Star className="w-5 h-5 fill-current" />
-                          <Star className="w-5 h-5 fill-current" />
-                          <Star className="w-5 h-5 fill-current" />
-                        </div>
-                        <span className="text-sm text-gray-500 font-medium">By Verified Buyers</span>
-                      </div>
-                      
-                      <div className="flex-1 w-full space-y-3">
-                        {[5, 4, 3, 2, 1].map(star => (
-                          <div key={star} className="flex items-center gap-3 text-sm font-medium text-gray-600">
-                            <span className="w-3 text-right">{star}</span>
-                            <Star className="w-4 h-4 fill-gray-800 text-gray-800" />
-                            <div className="flex-1 h-2.5 bg-gray-100 rounded-full overflow-hidden">
-                              <div className="h-full bg-[#e6e8ea] shadow-sm text-gray-900 rounded-full" style={{ width: star === 5 ? '80%' : star === 4 ? '20%' : '0%' }}></div>
-                            </div>
-                            <span className="w-4 text-right">{star === 5 ? 3 : star === 4 ? 1 : 0}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
+                  <ProductReviews 
+                    reviews={reviews} 
+                    onAddReview={(review: any) => onAddReview?.(review)} 
+                    avgRating={avgRating} 
+                    reviewCount={reviewCount} 
+                    productName={product.name} 
+                  />
                 </div>
               </div>
             </div>
@@ -2034,7 +1964,7 @@ const ProductCard = ({ product, onProductClick, onAddToCart, onBuyNow, avgRating
   );
 };
 
-const FlashSale = ({ products, onProductClick, onAddToCart, onBuyNow, wishlist, onToggleWishlist }: any) => {
+const FlashSale = ({ products, onProductClick, onAddToCart, onBuyNow, wishlist, onToggleWishlist, reviews, onAddReview }: any) => {
   const [timeLeft, setTimeLeft] = useState({ hours: 12, minutes: 34, seconds: 56 });
 
   useEffect(() => {
@@ -2118,6 +2048,8 @@ const FlashSale = ({ products, onProductClick, onAddToCart, onBuyNow, wishlist, 
                 onToggleWishlist={onToggleWishlist}
                 hideActions={true}
                 isFlashSale={true}
+                reviews={reviews}
+                onAddReview={onAddReview}
               />
             </div>
           ))}
@@ -2141,6 +2073,7 @@ const ProductSection = ({
   reviews, 
   wishlist, 
   onToggleWishlist, 
+  onAddReview,
   isLoading,
   searchQuery,
   filters
@@ -2150,7 +2083,8 @@ const ProductSection = ({
   onProductClick: (product: any) => void, 
   reviews: Record<string, any[]>, 
   wishlist: any[], 
-  onToggleWishlist: (product: any) => void, 
+  onToggleWishlist: (product: any) => void,
+  onAddReview: (review: any) => void,
   isLoading?: boolean,
   searchQuery: string,
   filters: { category: string, maxPrice: number, minRating: number }
@@ -2259,6 +2193,8 @@ const ProductSection = ({
                 reviewCount={reviewCount}
                 isWishlisted={isWishlisted}
                 onToggleWishlist={onToggleWishlist}
+                reviews={reviews}
+                onAddReview={onAddReview}
               />
             );
           })
@@ -3195,6 +3131,8 @@ export default function Home() {
           onBuyNow={handleBuyNow}
           wishlist={wishlist} 
           onToggleWishlist={toggleWishlist} 
+          reviews={reviews}
+          onAddReview={(review: any) => review.productName ? handleAddReview(review.productName, review) : null}
         />
         <div id="product-section" className="pt-2">
           <ProductSection 
@@ -3204,6 +3142,7 @@ export default function Home() {
             reviews={reviews} 
             wishlist={wishlist} 
             onToggleWishlist={toggleWishlist} 
+            onAddReview={(review: any) => review.productName ? handleAddReview(review.productName, review) : null}
             isLoading={isLoadingProducts} 
             searchQuery={searchQuery}
             filters={filters}
@@ -3236,6 +3175,8 @@ export default function Home() {
                       reviewCount={reviewCount}
                       isWishlisted={isWishlisted}
                       onToggleWishlist={toggleWishlist}
+                      reviews={reviews}
+                      onAddReview={(review: any) => handleAddReview(product.name, review)}
                     />
                   </div>
                 );

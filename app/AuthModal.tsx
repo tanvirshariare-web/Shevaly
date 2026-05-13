@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { X, Mail, Lock, User as UserIcon, Eye, EyeOff } from 'lucide-react';
+import { X, Mail, Lock, User as UserIcon, Eye, EyeOff, AlertCircle } from 'lucide-react';
 import Image from 'next/image';
 import { signInWithPopup, signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth, googleProvider } from '../lib/firebase';
@@ -65,7 +65,7 @@ export default function AuthModal({ isOpen, onClose, initialMode = 'login' }: { 
       onClose();
     } catch (err: any) {
       console.error(err);
-      if (err.code === 'auth/user-not-found' || err.code === 'auth/invalid-credential') {
+      if (err.code === 'auth/user-not-found' || err.code === 'auth/invalid-credential' || err.code === 'auth/wrong-password') {
         setError('Invalid email or password.');
       } else if (err.code === 'auth/email-already-in-use') {
         setError('An account with this email already exists.');
@@ -119,9 +119,9 @@ export default function AuthModal({ isOpen, onClose, initialMode = 'login' }: { 
           </div>
 
           {error && (
-            <div className="mb-6 p-4 bg-red-50 text-red-600 text-sm rounded-2xl border border-red-100 flex items-start gap-3">
-              <div className="mt-0.5">⚠️</div>
-              <div>{error}</div>
+            <div className="mb-6 px-4 py-3 bg-red-50 text-red-600 text-sm rounded-xl border border-red-100 flex items-start gap-3 animate-in fade-in slide-in-from-top-2">
+              <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
+              <div className="font-medium text-[13px] leading-relaxed">{error}</div>
             </div>
           )}
 
