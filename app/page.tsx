@@ -399,6 +399,11 @@ const categories = [
   { name: 'Beauty', image: 'https://images.unsplash.com/photo-1522337660859-02fbefca4702?w=400&q=80' },
   { name: 'Jewelry', image: 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=400&q=80' },
   { name: 'Bags', image: 'https://images.unsplash.com/photo-1584916201218-f4242ceb4809?w=400&q=80' },
+  { name: 'Topwear', image: 'https://placehold.co/400x400/f3f4f6/6b7280?text=Topwear' },
+  { name: 'Bottomwear', image: 'https://placehold.co/400x400/f3f4f6/6b7280?text=Bottomwear' },
+  { name: 'Grooming', image: 'https://placehold.co/400x400/f3f4f6/6b7280?text=Grooming' },
+  { name: 'Accessories', image: 'https://placehold.co/400x400/f3f4f6/6b7280?text=Accessories' },
+  { name: 'Fragrances', image: 'https://placehold.co/400x400/f3f4f6/6b7280?text=Fragrances' },
 ];
 
 const Categories = ({ onCategoryClick }: { onCategoryClick: (category: string) => void }) => (
@@ -414,7 +419,7 @@ const Categories = ({ onCategoryClick }: { onCategoryClick: (category: string) =
         {categories.map((cat, i) => (
           <div key={i} onClick={() => onCategoryClick(cat.name)} className="flex flex-col items-center gap-2 w-[100px] md:w-[120px] cursor-pointer group shrink-0">
             <div className="w-full aspect-square rounded-xl overflow-hidden bg-gray-100 shadow-sm group-hover:shadow-md transition relative">
-              <Image referrerPolicy="no-referrer" src={cat.image} alt={cat.name} fill className="object-cover group-hover:scale-110 transition duration-500" />
+              <Image referrerPolicy="no-referrer" src={cat.image || `https://placehold.co/400x400/f3f4f6/6b7280?text=${encodeURIComponent(cat.name)}`} alt={cat.name} fill className="object-cover group-hover:scale-110 transition duration-500" />
             </div>
             <span className="text-xs md:text-sm text-center font-medium text-gray-700 group-hover:text-gray-800 transition">{cat.name}</span>
           </div>
